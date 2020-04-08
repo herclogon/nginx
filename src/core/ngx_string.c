@@ -29,6 +29,22 @@ ngx_strlow(u_char *dst, u_char *src, size_t n)
 }
 
 
+size_t
+ngx_strnlen(u_char *p, size_t n)
+{
+    size_t  i;
+
+    for (i = 0; i < n; i++) {
+
+        if (p[i] == '\0') {
+            return i;
+        }
+    }
+
+    return n;
+}
+
+
 u_char *
 ngx_cpystrn(u_char *dst, u_char *src, size_t n)
 {
@@ -1365,7 +1381,7 @@ ngx_utf8_length(u_char *p, size_t n)
             continue;
         }
 
-        if (ngx_utf8_decode(&p, n) > 0x10ffff) {
+        if (ngx_utf8_decode(&p, last - p) > 0x10ffff) {
             /* invalid UTF-8 */
             return n;
         }
@@ -1994,6 +2010,14 @@ ngx_sort(void *base, size_t n, size_t size,
     }
 
     ngx_free(p);
+}
+
+
+void
+ngx_explicit_memzero(void *buf, size_t n)
+{
+    ngx_memzero(buf, n);
+    ngx_memory_barrier();
 }
 
 
